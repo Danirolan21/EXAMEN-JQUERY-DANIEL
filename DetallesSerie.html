@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles Serie</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm bg-info">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="images/Stranger Things.png" alt="" width="90" height="50"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="Home.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="NuevoPersonaje.html">Nuevo Personaje</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ModificarPersonajes.html">Modificar personajes</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Series
+                        </a>
+                        <ul id="series" class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-3">
+        <div class="card">
+            <img id="Imagen" src="" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 id="Nombre" class="card-title"></h5>
+                <p id="Puntuacion" class="card-text"></p>
+                <div class="d-flex align-items-center">
+                    <p id="Anio" class="card-text m-0 me-2"></p>
+                    <img src="images/star.svg" alt="" width="20">
+                </div>
+                <a id="MostrarPersonajes" href="#" class="btn btn-success w-100">Mostrar Personajes</a>
+            </div>
+        </div>
+    </div>
+    <script src="js/bootstrap.bundle.js"></script>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        let urlSeriesPersonajes = "https://apiseriespersonajes2024.azurewebsites.net/"
+        $(document).ready(function () {
+            loadSeries();
+            loadDetallesSerie();
+        })
+
+        function loadDetallesSerie() {
+            let params = new window.URLSearchParams(window.location.search);
+            let idSerie = params.get('idSerie');
+            let request = "api/series/" + idSerie;
+            console.log(request);
+            let url = urlSeriesPersonajes + request;
+            $.ajax({
+                url: url,
+                type: "GET",
+                contentType: "application/json",
+                success: function (data) {
+                    console.log(data.imagen);
+                    $("#Imagen").attr("src", data.imagen)
+                    $("#Nombre").html("Nombre: " + data.nombre)
+                    $("#Puntuacion").html("Puntuacion: " + data.puntuacion)
+                    $("#Anio").html("Año: " + data.año)
+                    $("#MostrarPersonajes").attr("href", "Serie.html?idSerie=" + data.idSerie)
+                }
+            })
+        }
+
+        function loadSeries() {
+            let request = "api/series"
+            let url = urlSeriesPersonajes + request;
+            $("#series").html("");
+            $.ajax({
+                url: url,
+                type: "GET",
+                contentType: "application/json",
+                success: function (data) {
+                    $.each(data, function (index, serie) {
+                        var li = $("<li>");
+                        var a = $("<a>", { href: "DetallesSerie.html?idSerie=" + serie.idSerie, text: serie.nombre })
+
+                        a.addClass("dropdown-item");
+                        a.appendTo(li);
+                        $("#series").append(li);
+                    })
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
